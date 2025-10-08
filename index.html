@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【有个工具】 - 效率软件</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .app-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .app-tagline {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            max-width: 700px;
+            margin: 0 auto 25px;
+        }
+        
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 25px;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            padding: 30px;
+            flex: 1;
+            min-width: 280px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .widget-icon {
+            background-color: rgba(52, 152, 219, 0.15);
+            color: #3498db;
+        }
+        
+        .tool-icon {
+            background-color: rgba(46, 204, 113, 0.15);
+            color: #2ecc71;
+        }
+        
+        .fish-icon {
+            background-color: rgba(155, 89, 182, 0.15);
+            color: #9b59b6;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .feature-description {
+            color: #5d6d7e;
+            font-size: 1rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .features {
+                flex-direction: column;
+            }
+            
+            .app-name {
+                font-size: 2rem;
+            }
+            
+            .app-tagline {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="app-name">【有个工具】</h1>
+            <p class="app-tagline">集成多元实用小组件与高频工具的效率软件，旨在为用户的日常工作与生活提供便捷助力</p>
+        </header>
+        
+        <main>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon widget-icon">
+                        ⚙️
+                    </div>
+                    <h2 class="feature-title">Widget组件</h2>
+                    <p class="feature-description">数十款免费 Widget 组件，即取即用！快速访问常用功能，提升工作效率，让您的桌面更加整洁有序。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon tool-icon">
+                        🛠️
+                    </div>
+                    <h2 class="feature-title">实用工具</h2>
+                    <p class="feature-description">数十款实用工具，随需使用！涵盖日常所需的各种功能，从文件管理到系统优化，一应俱全。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon fish-icon">
+                        🐟
+                    </div>
+                    <h2 class="feature-title">摸鱼专区</h2>
+                    <p class="feature-description">尽情摸鱼！工作之余的放松空间，提供有趣的小游戏和娱乐内容，让您在工作间隙得到充分休息。</p>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>© 2025 【有个工具】 - 让效率与乐趣并存</p>
+        </footer>
+    </div>
+</body>
+</html>
