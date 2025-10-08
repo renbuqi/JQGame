@@ -28,7 +28,7 @@
         
         header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
         }
         
         .app-name {
@@ -43,7 +43,42 @@
             font-size: 1.2rem;
             color: #7f8c8d;
             max-width: 700px;
-            margin: 0 auto 25px;
+            margin: 0 auto 30px;
+        }
+        
+        .download-section {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            transition: all 0.3s ease;
+            margin: 10px 0;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        .download-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .download-icon {
+            margin-right: 10px;
+            font-size: 1.4rem;
         }
         
         .features {
@@ -51,6 +86,7 @@
             flex-wrap: wrap;
             justify-content: space-between;
             gap: 25px;
+            margin-bottom: 20px;
         }
         
         .feature-card {
@@ -108,9 +144,16 @@
         
         footer {
             text-align: center;
-            margin-top: 50px;
+            margin-top: 40px;
             color: #7f8c8d;
             font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .record-info {
+            margin-top: 10px;
+            font-size: 0.8rem;
         }
         
         @media (max-width: 768px) {
@@ -125,6 +168,11 @@
             .app-tagline {
                 font-size: 1rem;
             }
+            
+            .download-btn {
+                padding: 12px 25px;
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
@@ -133,6 +181,13 @@
         <header>
             <h1 class="app-name">【有个工具】</h1>
             <p class="app-tagline">集成多元实用小组件与高频工具的效率软件，旨在为用户的日常工作与生活提供便捷助力</p>
+            
+            <div class="download-section">
+                <a href="https://apps.apple.com/cn/app/%E6%9C%89%E4%B8%AA%E5%B7%A5%E5%85%B7/id6744524217" class="download-btn" target="_blank">
+                    <span class="download-icon">⬇️</span>
+                    <span>前往App Store下载</span>
+                </a>
+            </div>
         </header>
         
         <main>
@@ -165,6 +220,7 @@
         
         <footer>
             <p>© 2025 【有个工具】 - 让效率与乐趣并存</p>
+            <p class="record-info">沪ICP备2024081592号-10A</p>
         </footer>
     </div>
 </body>
