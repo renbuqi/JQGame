@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片网格合并工具 - 优化版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e1e5eb;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .description {
+            color: #7f8c8d;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .left-panel {
+            flex: 1;
+            min-width: 350px;
+        }
+        
+        .right-panel {
+            flex: 2;
+            min-width: 500px;
+        }
+        
+        .panel {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+        }
+        
+        .panel h2 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #3498db;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .file-upload-area {
+            border: 2px dashed #bdc3c7;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: #f8f9fa;
+        }
+        
+        .file-upload-area:hover {
+            border-color: #3498db;
+            background-color: #f0f8ff;
+        }
+        
+        .file-upload-area.drag-over {
+            border-color: #2ecc71;
+            background-color: #e8f8f1;
+        }
+        
+        .file-upload-area i {
+            font-size: 48px;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .file-upload-area p {
+            margin-bottom: 10px;
+            color: #7f8c8d;
+        }
+        
+        .file-upload-area .button {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .file-upload-area .button:hover {
+            background-color: #2980b9;
+        }
+        
+        #file-input {
+            display: none;
+        }
+        
+        .layout-options {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .layout-option {
+            flex: 1;
+            min-width: 100px;
+            text-align: center;
+            padding: 15px 10px;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .layout-option:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+        }
+        
+        .layout-option.selected {
+            border-color: #3498db;
+            background-color: #e8f4fd;
+        }
+        
+        .layout-option .grid-visual {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .canvas-size-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .size-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .size-option input[type="radio"] {
+            margin-right: 5px;
+        }
+        
+        .custom-size-inputs {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .size-input {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .size-input label {
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .size-input input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 120px;
+        }
+        
+        .image-previews {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #e1e5eb;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+        
+        #image-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .thumbnail-container {
+            position: relative;
+            cursor: move;
+        }
+        
+        .thumbnail-container.dragging {
+            opacity: 0.5;
+        }
+        
+        .thumbnail {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 5px;
+            border: 2px solid #e1e5eb;
+            background-color: white;
+        }
+        
+        .thumbnail-info {
+            font-size: 0.7rem;
+            color: #7f8c8d;
+            text-align: center;
+            margin-top: 3px;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .thumbnail-actions {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            display: flex;
+            gap: 5px;
+        }
+        
+        .thumbnail-action-btn {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.2s;
+        }
+        
+        .remove-thumbnail {
+            background-color: rgba(231, 76, 60, 0.9);
+            color: white;
+        }
+        
+        .remove-thumbnail:hover {
+            background-color: #c0392b;
+        }
+        
+        .move-up-btn {
+            background-color: rgba(52, 152, 219, 0.9);
+            color: white;
+        }
+        
+        .move-up-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .move-down-btn {
+            background-color: rgba(46, 204, 113, 0.9);
+            color: white;
+        }
+        
+        .move-down-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        #no-images-message {
+            color: #7f8c8d;
+            text-align: center;
+            width: 100%;
+            padding: 20px;
+        }
+        
+        .canvas-container {
+            position: relative;
+            margin-bottom: 20px;
+            border: 1px solid #e1e5eb;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: white;
+        }
+        
+        #merged-canvas {
+            display: block;
+            max-width: 100%;
+            background-image: 
+                linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+                linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+                linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+        
+        .canvas-info {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #merge-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        #merge-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        #merge-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        #download-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        #download-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        #download-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        #clear-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        #clear-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        #reset-btn {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        #reset-btn:hover {
+            background-color: #d35400;
+        }
+        
+        .info-box {
+            background-color: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .status.success {
+            background-color: #d5f4e6;
+            color: #27ae60;
+        }
+        
+        .status.error {
+            background-color: #fadbd8;
+            color: #c0392b;
+        }
+        
+        .status.info {
+            background-color: #e8f4fd;
+            color: #3498db;
+        }
+        
+        .sort-hint {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5eb;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .left-panel, .right-panel {
+                width: 100%;
+            }
+            
+            .layout-options {
+                flex-direction: column;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-th-large"></i> 图片网格合并工具 - 优化版</h1>
+        <p class="description">上传多张图片，选择网格布局（2×2、3×3或4×4），将它们合并为一张图片。保留原始图片的透明像素，无缝拼接，并可自定义画布大小。支持拖拽调整图片顺序。</p>
+    </header>
+    
+    <div class="main-container">
+        <div class="left-panel">
+            <div class="panel">
+                <h2><i class="fas fa-upload"></i> 上传图片</h2>
+                <div class="file-upload-area" id="drop-area">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>拖放图片到此处，或点击选择图片</p>
+                    <p>支持 PNG、GIF、WebP 等透明格式</p>
+                    <div class="button">选择图片</div>
+                    <input type="file" id="file-input" accept="image/*" multiple>
+                </div>
+                <div id="image-count-info" style="margin-top: 15px; color: #7f8c8d; font-size: 0.9rem;">
+                    已选择 <span id="image-count">0</span> 张图片
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2><i class="fas fa-border-all"></i> 网格布局设置</h2>
+                <div class="layout-options">
+                    <div class="layout-option" data-layout="2">
+                        <div class="grid-visual">
+                            <i class="fas fa-grip" style="font-size: 32px;"></i>
+                        </div>
+                        <div class="grid-label">2×2 网格</div>
+                        <div class="grid-info">最多 4 张图片</div>
+                    </div>
+                    <div class="layout-option" data-layout="3">
+                        <div class="grid-visual">
+                            <i class="fas fa-th-large" style="font-size: 32px;"></i>
+                        </div>
+                        <div class="grid-label">3×3 网格</div>
+                        <div class="grid-info">最多 9 张图片</div>
+                    </div>
+                    <div class="layout-option selected" data-layout="4">
+                        <div class="grid-visual">
+                            <i class="fas fa-table-cells-large" style="font-size: 32px;"></i>
+                        </div>
+                        <div class="grid-label">4×4 网格</div>
+                        <div class="grid-info">最多 16 张图片</div>
+                    </div>
+                </div>
+                
+                <div class="canvas-size-controls">
+                    <h3>画布大小设置</h3>
+                    <div class="size-option">
+                        <input type="radio" id="auto-size" name="canvas-size" value="auto" checked>
+                        <label for="auto-size">自动计算（单张图片尺寸 × 网格数量）</label>
+                    </div>
+                    <div class="size-option">
+                        <input type="radio" id="custom-size" name="canvas-size" value="custom">
+                        <label for="custom-size">自定义画布大小</label>
+                    </div>
+                    
+                    <div id="custom-size-inputs" class="custom-size-inputs" style="display: none;">
+                        <div class="size-input">
+                            <label for="canvas-width">画布宽度（像素）</label>
+                            <input type="number" id="canvas-width" min="100" max="5000" value="800">
+                        </div>
+                        <div class="size-input">
+                            <label for="canvas-height">画布高度（像素）</label>
+                            <input type="number" id="canvas-height" min="100" max="5000" value="600">
+                        </div>
+                        <div class="size-input">
+                            <label for="cell-margin">单元格间距（像素）</label>
+                            <input type="number" id="cell-margin" min="0" max="50" value="0">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <p><i class="fas fa-info-circle"></i> 提示：</p>
+                    <ul style="margin-left: 20px; margin-top: 5px;">
+                        <li>图片会保留原始透明像素</li>
+                        <li>默认无缝拼接（间距为0）</li>
+                        <li>自动计算模式：画布大小 = 最大图片尺寸 × 网格数量</li>
+                        <li>自定义模式：可设置画布尺寸和单元格间距</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2><i class="fas fa-images"></i> 已上传的图片</h2>
+                <p class="sort-hint">提示：可以拖拽图片调整顺序，或使用上下箭头按钮</p>
+                <div class="image-previews">
+                    <div id="image-list">
+                        <p id="no-images-message">暂无上传的图片</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="right-panel">
+            <div class="panel">
+                <h2><i class="fas fa-image"></i> 合并结果预览</h2>
+                <div class="canvas-container">
+                    <canvas id="merged-canvas"></canvas>
+                    <div class="canvas-info" id="canvas-info">画布大小: 0 × 0 像素</div>
+                </div>
+                
+                <div class="button-group">
+                    <button id="merge-btn">
+                        <i class="fas fa-layer-group"></i> 合并图片
+                    </button>
+                    <button id="download-btn" disabled>
+                        <i class="fas fa-download"></i> 下载合并图片
+                    </button>
+                    <button id="clear-btn">
+                        <i class="fas fa-trash"></i> 清除图片
+                    </button>
+                    <button id="reset-btn">
+                        <i class="fas fa-redo"></i> 重置全部
+                    </button>
+                </div>
+                
+                <div id="status" class="status info"></div>
+            </div>
+            
+            <div class="panel">
+                <h2><i class="fas fa-cog"></i> 高级设置</h2>
+                <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+                    <div class="size-input">
+                        <label for="output-format">输出格式</label>
+                        <select id="output-format" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; width: 150px;">
+                            <option value="png" selected>PNG（保留透明背景）</option>
+                            <option value="jpeg">JPEG（高质量）</option>
+                            <option value="webp">WebP（现代格式）</option>
+                        </select>
+                    </div>
+                    <div class="size-input">
+                        <label for="bg-color">背景颜色（当格式非PNG时）</label>
+                        <input type="color" id="bg-color" value="#ffffff" style="height: 40px; width: 120px;">
+                    </div>
+                    <div class="size-input">
+                        <label for="quality">图片质量（0-1）</label>
+                        <input type="range" id="quality" min="0.1" max="1" step="0.1" value="1" style="width: 120px;">
+                        <span id="quality-value">1.0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <p><i class="fas fa-lightbulb"></i> 使用技巧：</p>
+                <ul style="margin-left: 20px; margin-top: 5px;">
+                    <li>按住Ctrl或Shift键可一次性选择多张图片</li>
+                    <li>拖放图片到上传区域可直接添加图片</li>
+                    <li>使用PNG格式可保留透明背景，适合图标和素材</li>
+                    <li>自定义画布大小时，图片会自动缩放以适应单元格</li>
+                    <li>可以拖拽图片缩略图调整顺序，合并时会按照调整后的顺序进行</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>图片网格合并工具 - 优化版 &copy; 2023 | 使用HTML5 Canvas实现</p>
+    </footer>
+
+    <script>
+        // 获取DOM元素
+        const fileInput = document.getElementById('file-input');
+        const dropArea = document.getElementById('drop-area');
+        const imageList = document.getElementById('image-list');
+        const imageCount = document.getElementById('image-count');
+        const noImagesMessage = document.getElementById('no-images-message');
+        const layoutOptions = document.querySelectorAll('.layout-option');
+        const mergeBtn = document.getElementById('merge-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const canvas = document.getElementById('merged-canvas');
+        const ctx = canvas.getContext('2d');
+        const statusDiv = document.getElementById('status');
+        const canvasInfo = document.getElementById('canvas-info');
+        
+        // 画布大小选项
+        const autoSizeRadio = document.getElementById('auto-size');
+        const customSizeRadio = document.getElementById('custom-size');
+        const customSizeInputs = document.getElementById('custom-size-inputs');
+        const canvasWidthInput = document.getElementById('canvas-width');
+        const canvasHeightInput = document.getElementById('canvas-height');
+        const cellMarginInput = document.getElementById('cell-margin');
+        
+        // 高级设置
+        const outputFormatSelect = document.getElementById('output-format');
+        const bgColorInput = document.getElementById('bg-color');
+        const qualityInput = document.getElementById('quality');
+        const qualityValue = document.getElementById('quality-value');
+        
+        // 全局变量
+        let images = [];
+        let selectedLayout = 4; // 默认4x4布局
+        let isAutoSize = true; // 默认自动计算画布大小
+        let cellMargin = 0; // 默认单元格间距
+        let dragSrcElement = null; // 拖拽源元素
+        let isDragging = false; // 是否正在拖拽
+        
+        // 初始化
+        function init() {
+            // 设置布局选择事件
+            layoutOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    layoutOptions.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    selectedLayout = parseInt(option.dataset.layout);
+                    updateStatus(`已选择 ${selectedLayout}×${selectedLayout} 网格布局`, "info");
+                    
+                    // 检查图片数量是否超过限制
+                    checkImageLimit();
+                });
+            });
+            
+            // 文件选择事件
+            dropArea.addEventListener('click', () => fileInput.click());
+            
+            // 文件输入变化事件
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            // 拖放事件
+            dropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropArea.classList.add('drag-over');
+            });
+            
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.classList.remove('drag-over');
+            });
+            
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.classList.remove('drag-over');
+                
+                const files = Array.from(e.dataTransfer.files).filter(file => 
+                    file.type.startsWith('image/')
+                );
+                
+                handleFiles(files);
+            });
+            
+            // 画布大小选项事件
+            autoSizeRadio.addEventListener('change', () => {
+                isAutoSize = true;
+                customSizeInputs.style.display = 'none';
+                updateStatus("已启用自动画布大小计算", "info");
+            });
+            
+            customSizeRadio.addEventListener('change', () => {
+                isAutoSize = false;
+                customSizeInputs.style.display = 'flex';
+                updateStatus("已启用自定义画布大小", "info");
+            });
+            
+            // 单元格间距变化事件
+            cellMarginInput.addEventListener('input', () => {
+                cellMargin = parseInt(cellMarginInput.value) || 0;
+            });
+            
+            // 图片质量滑块事件
+            qualityInput.addEventListener('input', () => {
+                qualityValue.textContent = qualityInput.value;
+            });
+            
+            // 按钮事件
+            mergeBtn.addEventListener('click', mergeImages);
+            downloadBtn.addEventListener('click', downloadMergedImage);
+            clearBtn.addEventListener('click', clearImages);
+            resetBtn.addEventListener('click', resetAll);
+            
+            // 初始状态
+            updateImageList();
+            updateStatus("请上传图片并选择网格布局", "info");
+        }
+        
+        // 检查图片数量是否超过网格限制
+        function checkImageLimit() {
+            const maxImages = selectedLayout * selectedLayout;
+            if (images.length > maxImages) {
+                updateStatus(`图片数量(${images.length})超过网格容量(${maxImages})，将只使用前${maxImages}张图片`, "error");
+                return false;
+            }
+            return true;
+        }
+        
+        // 处理文件选择
+        function handleFileSelect(e) {
+            const files = Array.from(e.target.files).filter(file => 
+                file.type.startsWith('image/')
+            );
+            
+            handleFiles(files);
+            fileInput.value = ''; // 重置input，允许重新选择相同文件
+        }
+        
+        // 处理文件
+        function handleFiles(files) {
+            if (files.length === 0) {
+                updateStatus("未选择有效的图片文件", "error");
+                return;
+            }
+            
+            // 计算最大允许的图片数量
+            const maxImages = selectedLayout * selectedLayout;
+            const availableSlots = maxImages - images.length;
+            
+            if (availableSlots <= 0) {
+                updateStatus(`已达到最大图片数量(${maxImages})，无法添加更多图片`, "error");
+                return;
+            }
+            
+            // 限制添加的图片数量
+            if (files.length > availableSlots) {
+                updateStatus(`最多只能添加 ${availableSlots} 张图片（已达到${images.length}/${maxImages}）`, "error");
+                files = files.slice(0, availableSlots);
+            }
+            
+            // 加载每个图片
+            let loadedCount = 0;
+            files.forEach(file => {
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        images.push({
+                            file: file,
+                            url: e.target.result,
+                            width: img.width,
+                            height: img.height,
+                            name: file.name,
+                            size: file.size,
+                            image: img // 保存Image对象以便后续使用
+                        });
+                        
+                        loadedCount++;
+                        
+                        // 当所有图片加载完成
+                        if (loadedCount === files.length) {
+                            updateImageList();
+                            updateStatus(`成功添加 ${files.length} 张图片，共 ${images.length}/${maxImages} 张`, "success");
+                        }
+                    };
+                    img.onerror = () => {
+                        updateStatus(`图片 ${file.name} 加载失败`, "error");
+                        loadedCount++;
+                    };
+                    img.src = e.target.result;
+                };
+                
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // 更新图片列表显示
+        function updateImageList() {
+            imageCount.textContent = images.length;
+            
+            if (images.length === 0) {
+                noImagesMessage.style.display = 'block';
+                imageList.innerHTML = '';
+                return;
+            }
+            
+            noImagesMessage.style.display = 'none';
+            
+            // 清空当前列表
+            imageList.innerHTML = '';
+            
+            // 添加缩略图
+            images.forEach((image, index) => {
+                const container = document.createElement('div');
+                container.className = 'thumbnail-container';
+                container.dataset.index = index;
+                container.draggable = true;
+                
+                // 拖拽事件
+                container.addEventListener('dragstart', handleDragStart);
+                container.addEventListener('dragover', handleDragOver);
+                container.addEventListener('dragenter', handleDragEnter);
+                container.addEventListener('dragleave', handleDragLeave);
+                container.addEventListener('drop', handleDrop);
+                container.addEventListener('dragend', handleDragEnd);
+                
+                const img = document.createElement('img');
+                img.className = 'thumbnail';
+                img.src = image.url;
+                img.alt = `图片 ${index + 1}`;
+                img.title = `${image.name} (${image.width}×${image.height})`;
+                
+                const info = document.createElement('div');
+                info.className = 'thumbnail-info';
+                info.textContent = `${index+1}. ${image.name.substring(0, 10)}${image.name.length > 10 ? '...' : ''} (${image.width}×${image.height})`;
+                
+                const actions = document.createElement('div');
+                actions.className = 'thumbnail-actions';
+                
+                // 向上移动按钮
+                const moveUpBtn = document.createElement('div');
+                moveUpBtn.className = 'thumbnail-action-btn move-up-btn';
+                moveUpBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+                moveUpBtn.title = "向上移动";
+                moveUpBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    moveImageUp(index);
+                });
+                
+                // 向下移动按钮
+                const moveDownBtn = document.createElement('div');
+                moveDownBtn.className = 'thumbnail-action-btn move-down-btn';
+                moveDownBtn.innerHTML = '<i class="fas fa-arrow-down"></i>';
+                moveDownBtn.title = "向下移动";
+                moveDownBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    moveImageDown(index);
+                });
+                
+                // 删除按钮
+                const removeBtn = document.createElement('div');
+                removeBtn.className = 'thumbnail-action-btn remove-thumbnail';
+                removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                removeBtn.title = "移除图片";
+                removeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    removeImage(index);
+                });
+                
+                actions.appendChild(moveUpBtn);
+                actions.appendChild(moveDownBtn);
+                actions.appendChild(removeBtn);
+                
+                container.appendChild(img);
+                container.appendChild(info);
+                container.appendChild(actions);
+                imageList.appendChild(container);
+            });
+        }
+        
+        // 向上移动图片
+        function moveImageUp(index) {
+            if (index <= 0) return;
+            
+            // 交换位置
+            [images[index], images[index - 1]] = [images[index - 1], images[index]];
+            
+            updateImageList();
+            updateStatus(`图片已向上移动`, "info");
+        }
+        
+        // 向下移动图片
+        function moveImageDown(index) {
+            if (index >= images.length - 1) return;
+            
+            // 交换位置
+            [images[index], images[index + 1]] = [images[index + 1], images[index]];
+            
+            updateImageList();
+            updateStatus(`图片已向下移动`, "info");
+        }
+        
+        // 移除图片
+        function removeImage(index) {
+            const removedImage = images[index];
+            images.splice(index, 1);
+            updateImageList();
+            updateStatus(`已移除图片: ${removedImage.name}，剩余 ${images.length} 张`, "info");
+        }
+        
+        // 拖拽相关函数
+        function handleDragStart(e) {
+            dragSrcElement = this;
+            isDragging = true;
+            this.classList.add('dragging');
+            
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+        
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault(); // 允许放置
+            }
+            
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+        
+        function handleDragEnter(e) {
+            this.classList.add('over');
+        }
+        
+        function handleDragLeave(e) {
+            this.classList.remove('over');
+        }
+        
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation(); // 阻止事件冒泡
+            }
+            
+            // 如果不是从缩略图拖拽过来的，则返回
+            if (dragSrcElement !== this) {
+                // 获取拖拽源和目标索引
+                const srcIndex = parseInt(dragSrcElement.dataset.index);
+                const destIndex = parseInt(this.dataset.index);
+                
+                // 交换数组中的元素
+                const temp = images[srcIndex];
+                images[srcIndex] = images[destIndex];
+                images[destIndex] = temp;
+                
+                // 更新UI
+                updateImageList();
+                updateStatus(`图片顺序已调整`, "info");
+            }
+            
+            return false;
+        }
+        
+        function handleDragEnd(e) {
+            // 移除所有拖拽相关类
+            const items = document.querySelectorAll('.thumbnail-container');
+            items.forEach(item => {
+                item.classList.remove('over');
+                item.classList.remove('dragging');
+            });
+            
+            dragSrcElement = null;
+            isDragging = false;
+        }
+        
+        // 清除所有图片
+        function clearImages() {
+            if (images.length === 0) {
+                updateStatus("没有图片可清除", "error");
+                return;
+            }
+            
+            images = [];
+            updateImageList();
+            updateStatus("已清除所有图片", "info");
+        }
+        
+        // 重置所有
+        function resetAll() {
+            images = [];
+            selectedLayout = 4;
+            
+            // 重置布局选择
+            layoutOptions.forEach(option => {
+                option.classList.remove('selected');
+                if (parseInt(option.dataset.layout) === 4) {
+                    option.classList.add('selected');
+                }
+            });
+            
+            // 重置画布大小选项
+            autoSizeRadio.checked = true;
+            customSizeInputs.style.display = 'none';
+            isAutoSize = true;
+            
+            // 重置高级选项
+            outputFormatSelect.value = 'png';
+            bgColorInput.value = '#ffffff';
+            qualityInput.value = '1';
+            qualityValue.textContent = '1.0';
+            
+            // 清除canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.width = 0;
+            canvas.height = 0;
+            canvasInfo.textContent = "画布大小: 0 × 0 像素";
+            
+            // 禁用下载按钮
+            downloadBtn.disabled = true;
+            
+            updateImageList();
+            updateStatus("已重置所有设置，请重新上传图片", "info");
+        }
+        
+        // 合并图片
+        async function mergeImages() {
+            if (images.length === 0) {
+                updateStatus("请先上传图片", "error");
+                return;
+            }
+            
+            const gridSize = selectedLayout;
+            const totalCells = gridSize * gridSize;
+            const usedCells = Math.min(images.length, totalCells);
+            
+            // 计算画布大小
+            let canvasWidth, canvasHeight, cellWidth, cellHeight;
+            
+            if (isAutoSize) {
+                // 自动计算：取所有图片的最大宽高
+                let maxWidth = 0;
+                let maxHeight = 0;
+                
+                // 只考虑实际使用的图片
+                for (let i = 0; i < usedCells; i++) {
+                    maxWidth = Math.max(maxWidth, images[i].width);
+                    maxHeight = Math.max(maxHeight, images[i].height);
+                }
+                
+                cellWidth = maxWidth;
+                cellHeight = maxHeight;
+                canvasWidth = (cellWidth + cellMargin) * gridSize - cellMargin;
+                canvasHeight = (cellHeight + cellMargin) * gridSize - cellMargin;
+            } else {
+                // 自定义大小
+                canvasWidth = parseInt(canvasWidthInput.value) || 800;
+                canvasHeight = parseInt(canvasHeightInput.value) || 600;
+                cellMargin = parseInt(cellMarginInput.value) || 0;
+                
+                // 计算每个单元格的尺寸
+                cellWidth = (canvasWidth - cellMargin * (gridSize - 1)) / gridSize;
+                cellHeight = (canvasHeight - cellMargin * (gridSize - 1)) / gridSize;
+            }
+            
+            // 设置画布尺寸
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+            
+            // 清除画布（设置为完全透明）
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            
+            // 绘制每张图片
+            for (let i = 0; i < usedCells; i++) {
+                const row = Math.floor(i / gridSize);
+                const col = i % gridSize;
+                const x = col * (cellWidth + cellMargin);
+                const y = row * (cellHeight + cellMargin);
+                
+                // 绘制图片，保持原始透明像素
+                await drawImageInCell(i, x, y, cellWidth, cellHeight);
+            }
+            
+            // 更新画布信息
+            canvasInfo.textContent = `画布大小: ${canvasWidth} × ${canvasHeight} 像素`;
+            
+            // 启用下载按钮
+            downloadBtn.disabled = false;
+            
+            // 显示状态
+            updateStatus(`成功合并 ${usedCells} 张图片到 ${gridSize}×${gridSize} 网格中`, "success");
+        }
+        
+        // 在单元格内绘制图片
+        function drawImageInCell(imageIndex, x, y, cellWidth, cellHeight) {
+            return new Promise((resolve) => {
+                const image = images[imageIndex];
+                
+                // 直接使用已加载的Image对象
+                const img = image.image;
+                
+                // 计算图片在单元格内的缩放和位置
+                const scale = Math.min(cellWidth / img.width, cellHeight / img.height);
+                const scaledWidth = img.width * scale;
+                const scaledHeight = img.height * scale;
+                const offsetX = (cellWidth - scaledWidth) / 2;
+                const offsetY = (cellHeight - scaledHeight) / 2;
+                
+                // 保存画布状态
+                ctx.save();
+                
+                // 设置裁剪区域为单元格（如果需要）
+                ctx.beginPath();
+                ctx.rect(x, y, cellWidth, cellHeight);
+                ctx.clip();
+                
+                // 绘制图片，保持原始透明像素
+                ctx.drawImage(
+                    img, 
+                    0, 0, img.width, img.height,
+                    x + offsetX, y + offsetY, scaledWidth, scaledHeight
+                );
+                
+                ctx.restore();
+                resolve();
+            });
+        }
+        
+        // 下载合并的图片
+        function downloadMergedImage() {
+            if (canvas.width === 0 || canvas.height === 0) {
+                updateStatus("没有可下载的合并图片", "error");
+                return;
+            }
+            
+            // 根据选择的格式创建数据URL
+            const format = outputFormatSelect.value;
+            let dataUrl;
+            let filename = `merged-${selectedLayout}x${selectedLayout}-${new Date().getTime()}`;
+            
+            if (format === 'png') {
+                // PNG格式：直接使用canvas，保留透明像素
+                dataUrl = canvas.toDataURL('image/png');
+                filename += '.png';
+            } else if (format === 'jpeg') {
+                // 对于JPEG，我们需要先绘制白色背景
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCanvas.width = canvas.width;
+                tempCanvas.height = canvas.height;
+                
+                // 填充背景色
+                tempCtx.fillStyle = bgColorInput.value;
+                tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+                
+                // 绘制原canvas内容
+                tempCtx.drawImage(canvas, 0, 0);
+                
+                dataUrl = tempCanvas.toDataURL('image/jpeg', parseFloat(qualityInput.value));
+                filename += '.jpg';
+            } else if (format === 'webp') {
+                // WebP格式：也支持透明通道
+                dataUrl = canvas.toDataURL('image/webp', parseFloat(qualityInput.value));
+                filename += '.webp';
+            }
+            
+            // 创建下载链接
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = dataUrl;
+            link.click();
+            
+            updateStatus(`合并图片已开始下载 (${format.toUpperCase()})`, "success");
+        }
+        
+        // 更新状态信息
+        function updateStatus(message, type = "info") {
+            statusDiv.textContent = message;
+            statusDiv.className = "status";
+            
+            if (type) {
+                statusDiv.classList.add(type);
+            }
+            
+            // 5秒后清除状态（除非是成功状态，保留更久）
+            const timeout = type === "success" ? 8000 : 5000;
+            setTimeout(() => {
+                if (statusDiv.textContent === message) {
+                    statusDiv.textContent = "";
+                    statusDiv.className = "status";
+                }
+            }, timeout);
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
