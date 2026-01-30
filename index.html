@@ -2,7 +2,10 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 优化移动端视口配置，解决适配问题 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="translucent">
     <title>JQ系列软件 | 专业工具与娱乐应用</title>
     <style>
         * {
@@ -22,11 +25,18 @@
             --dark: #212529;
             --gray: #6c757d;
             --light-gray: #e9ecef;
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.12);
+            /* 优化毛玻璃背景，增强高级感 */
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-bg-blur: rgba(255, 255, 255, 0.7);
+            /* 优化阴影，更柔和自然 */
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.1);
             --border-radius: 16px;
-            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            /* 优化过渡曲线，更丝滑 */
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            /* 移动端适配变量 */
+            --mobile-gap: 16px;
+            --mobile-padding: 16px;
         }
         
         body {
@@ -36,6 +46,8 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
+            /* 防止移动端内容被截断 */
+            padding-bottom: 40px;
         }
         
         body::before {
@@ -56,18 +68,19 @@
         .container {
             max-width: 1280px;
             margin: 0 auto;
-            padding: 30px 20px;
+            /* 响应式内边距 */
+            padding: clamp(20px, 5vw, 30px) clamp(12px, 3vw, 20px);
         }
         
         /* 标题样式 */
         .page-header {
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: clamp(40px, 8vw, 60px);
             position: relative;
         }
         
         .page-title {
-            font-size: 3.5rem;
+            font-size: clamp(2rem, 8vw, 3.5rem);
             font-weight: 800;
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             -webkit-background-clip: text;
@@ -75,29 +88,36 @@
             background-clip: text;
             margin-bottom: 15px;
             letter-spacing: -0.5px;
+            line-height: 1.1; /* 优化文字行高，防止移动端换行错乱 */
         }
         
         .page-subtitle {
-            font-size: 1.25rem;
+            font-size: clamp(1rem, 3vw, 1.25rem);
             color: var(--gray);
             max-width: 600px;
             margin: 0 auto 30px;
             line-height: 1.6;
+            padding: 0 10px; /* 移动端左右内边距，防止文字贴边 */
         }
         
-        /* 主应用展示部分 */
+        /* 主应用展示部分 - 核心优化 */
         .main-app-section {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: var(--card-bg);
+            /* 增强毛玻璃效果，提升高级感 */
+            background: var(--card-bg-blur);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
-            padding: 40px;
-            margin-bottom: 60px;
+            /* 响应式内边距 */
+            padding: clamp(20px, 5vw, 40px);
+            margin-bottom: clamp(40px, 8vw, 60px);
             position: relative;
             overflow: hidden;
             transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.4); /* 增加细边框，提升质感 */
         }
         
         .main-app-section::before {
@@ -117,32 +137,37 @@
         
         .main-app-info {
             flex: 1;
-            padding-right: 40px;
+            padding-right: clamp(0px, 5vw, 40px);
         }
         
+        /* 主应用图标 - 移动端适配核心 */
         .main-app-icon {
-            width: 140px;
-            height: 140px;
-            border-radius: 28px;
+            width: clamp(80px, 20vw, 140px);
+            height: clamp(80px, 20vw, 140px);
+            border-radius: clamp(16px, 4vw, 28px);
             object-fit: cover;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-            border: 5px solid white;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+            border: 4px solid white;
             transition: var(--transition);
+            /* 确保图片不溢出 */
+            max-width: 100%;
+            display: block;
         }
         
         .main-app-section:hover .main-app-icon {
-            transform: scale(1.05) rotate(5deg);
+            transform: scale(1.05) rotate(3deg); /* 降低旋转角度，更自然 */
         }
         
         .app-name-large {
-            font-size: 2.8rem;
+            font-size: clamp(1.5rem, 6vw, 2.8rem);
             font-weight: 700;
             color: var(--dark);
             margin-bottom: 10px;
+            line-height: 1.2; /* 优化行高 */
         }
         
         .app-description {
-            font-size: 1.1rem;
+            font-size: clamp(0.95rem, 2.5vw, 1.1rem);
             color: var(--gray);
             margin-bottom: 25px;
             line-height: 1.6;
@@ -151,19 +176,21 @@
         .app-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 30px;
+            gap: 8px; /* 缩小间距，适配移动端 */
+            margin-bottom: clamp(20px, 4vw, 30px);
         }
         
         .app-tag {
             background: rgba(67, 97, 238, 0.1);
             color: var(--primary);
-            padding: 6px 16px;
+            padding: 4px 12px; /* 移动端缩小内边距 */
             border-radius: 50px;
-            font-size: 0.85rem;
+            font-size: clamp(0.75rem, 2vw, 0.85rem);
             font-weight: 600;
+            white-space: nowrap; /* 防止标签换行 */
         }
         
+        /* 主按钮 - 移动端优化点击区域 */
         .primary-btn {
             display: inline-flex;
             align-items: center;
@@ -171,16 +198,19 @@
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
             text-decoration: none;
-            padding: 16px 36px;
+            /* 响应式内边距，增大移动端点击区域 */
+            padding: clamp(12px, 4vw, 16px) clamp(24px, 8vw, 36px);
             border-radius: 50px;
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 3vw, 1.2rem);
             font-weight: 600;
-            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
+            box-shadow: 0 6px 18px rgba(67, 97, 238, 0.25);
             transition: var(--transition);
             border: none;
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            min-height: 48px; /* 符合移动端最小点击高度 */
+            min-width: 120px; /* 确保按钮不太小 */
         }
         
         .primary-btn::after {
@@ -198,7 +228,7 @@
         
         .primary-btn:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(67, 97, 238, 0.4);
+            box-shadow: 0 12px 24px rgba(67, 97, 238, 0.35);
         }
         
         .primary-btn:hover::after {
@@ -206,58 +236,64 @@
         }
         
         .btn-icon {
-            margin-right: 10px;
-            font-size: 1.4rem;
+            margin-right: 8px;
+            font-size: clamp(1.2rem, 3vw, 1.4rem);
         }
         
         /* 应用网格部分 */
         .apps-section {
-            margin-bottom: 80px;
+            margin-bottom: clamp(60px, 10vw, 80px);
         }
         
         .section-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 40px;
+            margin-bottom: clamp(30px, 6vw, 40px);
         }
         
         .section-title {
-            font-size: 2.2rem;
+            font-size: clamp(1.5rem, 5vw, 2.2rem);
             font-weight: 700;
             color: var(--dark);
             position: relative;
             display: inline-block;
+            line-height: 1.2;
         }
         
         .section-title::after {
             content: '';
             position: absolute;
-            bottom: -10px;
+            bottom: -8px; /* 缩小间距，适配移动端 */
             left: 0;
-            width: 60px;
-            height: 4px;
+            width: clamp(40px, 10vw, 60px);
+            height: 3px; /* 变细，更精致 */
             background: linear-gradient(to right, var(--primary), var(--secondary));
             border-radius: 2px;
         }
         
         .apps-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
+            /* 优化网格布局，移动端单列，平板双列，桌面多列 */
+            grid-template-columns: repeat(auto-fill, minmax(clamp(220px, 100%, 280px), 1fr));
+            gap: clamp(16px, 4vw, 30px);
         }
         
+        /* 应用卡片 - 毛玻璃优化 */
         .app-card {
-            background: var(--card-bg);
+            background: var(--card-bg-blur);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
-            padding: 25px;
+            padding: clamp(16px, 4vw, 25px);
             transition: var(--transition);
             display: flex;
             flex-direction: column;
             height: 100%;
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
         
         .app-card::before {
@@ -266,7 +302,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 5px;
+            height: 4px; /* 变细，更精致 */
             background: linear-gradient(to right, var(--primary), var(--secondary));
             transform: scaleX(0);
             transform-origin: left;
@@ -274,7 +310,7 @@
         }
         
         .app-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-8px); /* 降低悬浮高度，更自然 */
             box-shadow: var(--shadow-hover);
         }
         
@@ -289,43 +325,46 @@
         
         .highlight-badge {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 10px; /* 移动端上移 */
+            right: 10px; /* 移动端右移 */
             background: linear-gradient(135deg, var(--accent), #e63946);
             color: white;
-            padding: 6px 14px;
+            padding: 4px 10px; /* 缩小内边距 */
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: clamp(0.7rem, 2vw, 0.75rem);
             font-weight: 700;
             letter-spacing: 0.5px;
-            box-shadow: 0 4px 10px rgba(247, 37, 133, 0.3);
+            box-shadow: 0 3px 8px rgba(247, 37, 133, 0.25);
             z-index: 2;
         }
         
         .app-icon-container {
             display: flex;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: clamp(15px, 3vw, 20px);
         }
         
+        /* 应用图标 - 移动端适配 */
         .app-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 22px;
+            width: clamp(60px, 15vw, 80px);
+            height: clamp(60px, 15vw, 80px);
+            border-radius: clamp(16px, 3vw, 22px);
             object-fit: cover;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
             transition: var(--transition);
+            max-width: 100%;
+            display: block;
         }
         
         .app-card:hover .app-icon {
-            transform: scale(1.1);
+            transform: scale(1.08); /* 降低缩放比例，更自然 */
         }
         
         .app-card-title {
-            font-size: 1.3rem;
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
             font-weight: 700;
             color: var(--dark);
-            margin-bottom: 15px;
+            margin-bottom: clamp(10px, 2vw, 15px);
             text-align: center;
             line-height: 1.3;
         }
@@ -336,6 +375,7 @@
             justify-content: center;
         }
         
+        /* 次要按钮 - 移动端优化 */
         .secondary-btn {
             display: inline-flex;
             align-items: center;
@@ -343,70 +383,79 @@
             background: linear-gradient(135deg, var(--secondary) 0%, #5a08a6 100%);
             color: white;
             text-decoration: none;
-            padding: 10px 24px;
+            padding: clamp(8px, 3vw, 10px) clamp(18px, 5vw, 24px);
             border-radius: 50px;
-            font-size: 0.95rem;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
             font-weight: 600;
-            box-shadow: 0 5px 15px rgba(114, 9, 183, 0.25);
+            box-shadow: 0 4px 12px rgba(114, 9, 183, 0.2);
             transition: var(--transition);
+            min-height: 44px; /* 移动端最小点击高度 */
+            min-width: 100px;
         }
         
         .secondary-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(114, 9, 183, 0.35);
+            box-shadow: 0 8px 16px rgba(114, 9, 183, 0.3);
             color: white;
         }
         
         /* 在线应用部分 */
         .online-apps-section {
-            margin-bottom: 80px;
+            margin-bottom: clamp(60px, 10vw, 80px);
         }
         
         .online-apps-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(clamp(240px, 100%, 300px), 1fr));
+            gap: clamp(16px, 4vw, 30px);
         }
         
+        /* 在线应用卡片 - 毛玻璃优化 */
         .online-app-card {
-            background: var(--card-bg);
+            background: var(--card-bg-blur);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
-            padding: 30px;
+            padding: clamp(20px, 4vw, 30px);
             transition: var(--transition);
             display: flex;
             align-items: center;
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
         
         .online-app-card::after {
             content: '在线使用';
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 10px;
+            right: 10px;
             background: linear-gradient(135deg, var(--success), #3a86ff);
             color: white;
-            padding: 4px 12px;
+            padding: 3px 8px;
             border-radius: 20px;
-            font-size: 0.7rem;
+            font-size: clamp(0.65rem, 2vw, 0.7rem);
             font-weight: 700;
             letter-spacing: 0.5px;
         }
         
         .online-app-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-6px);
             box-shadow: var(--shadow-hover);
         }
         
+        /* 在线应用图标 - 移动端适配 */
         .online-app-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 18px;
+            width: clamp(50px, 12vw, 70px);
+            height: clamp(50px, 12vw, 70px);
+            border-radius: clamp(12px, 3vw, 18px);
             object-fit: cover;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            margin-right: 25px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            margin-right: clamp(15px, 3vw, 25px);
             flex-shrink: 0;
+            max-width: 100%;
+            display: block;
         }
         
         .online-app-info {
@@ -414,53 +463,59 @@
         }
         
         .online-app-title {
-            font-size: 1.4rem;
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
             font-weight: 700;
             color: var(--dark);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            line-height: 1.2;
         }
         
         .online-app-desc {
             color: var(--gray);
-            font-size: 0.95rem;
-            margin-bottom: 15px;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+            margin-bottom: clamp(10px, 2vw, 15px);
+            line-height: 1.5;
         }
         
         /* 功能特点部分 */
         .features-section {
-            margin-bottom: 80px;
+            margin-bottom: clamp(60px, 10vw, 80px);
         }
         
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(clamp(280px, 100%, 320px), 1fr));
+            gap: clamp(16px, 4vw, 30px);
         }
         
+        /* 功能卡片 - 毛玻璃优化 */
         .feature-card {
-            background: var(--card-bg);
+            background: var(--card-bg-blur);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
-            padding: 35px 30px;
+            padding: clamp(25px, 5vw, 35px) clamp(20px, 4vw, 30px);
             transition: var(--transition);
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
         
         .feature-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-8px);
             box-shadow: var(--shadow-hover);
         }
         
         .feature-icon-container {
-            width: 70px;
-            height: 70px;
-            border-radius: 18px;
+            width: clamp(50px, 12vw, 70px);
+            height: clamp(50px, 12vw, 70px);
+            border-radius: clamp(12px, 3vw, 18px);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 25px;
-            font-size: 2rem;
+            margin-bottom: clamp(20px, 4vw, 25px);
+            font-size: clamp(1.5rem, 4vw, 2rem);
             position: relative;
             overflow: hidden;
         }
@@ -473,7 +528,7 @@
             width: 100%;
             height: 100%;
             opacity: 0.15;
-            border-radius: 18px;
+            border-radius: inherit;
         }
         
         .feature-card:nth-child(1) .feature-icon-container::before {
@@ -501,34 +556,39 @@
         }
         
         .feature-title {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 3.5vw, 1.5rem);
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: clamp(10px, 2vw, 15px);
             color: var(--dark);
+            line-height: 1.2;
         }
         
         .feature-description {
             color: var(--gray);
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 2vw, 1rem);
             line-height: 1.6;
         }
         
-        /* 截图轮播部分 */
+        /* 截图轮播部分 - 核心优化：解决图片显示不全 */
         .screenshots-section {
-            margin-bottom: 80px;
+            margin-bottom: clamp(60px, 10vw, 80px);
         }
         
         .screenshots-container {
             display: flex;
-            gap: 25px;
+            gap: clamp(15px, 3vw, 25px);
             overflow-x: auto;
-            padding: 20px 10px 40px;
+            /* 优化滚动内边距，防止截图被截断 */
+            padding: 10px 0 clamp(20px, 5vw, 40px);
             scrollbar-width: thin;
             scrollbar-color: var(--primary) var(--light-gray);
+            /* 移动端增加滚动吸附 */
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch; /* 移动端顺滑滚动 */
         }
         
         .screenshots-container::-webkit-scrollbar {
-            height: 8px;
+            height: 6px; /* 移动端缩小滚动条 */
         }
         
         .screenshots-container::-webkit-scrollbar-track {
@@ -541,25 +601,30 @@
             border-radius: 10px;
         }
         
+        /* 截图卡片 - 移动端适配核心 */
         .screenshot-card {
             flex: 0 0 auto;
-            width: 280px;
-            border-radius: 20px;
+            /* 移动端宽度适配屏幕 */
+            width: clamp(200px, 75vw, 280px);
+            border-radius: clamp(16px, 4vw, 20px);
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             transition: var(--transition);
             position: relative;
+            scroll-snap-align: start; /* 滚动吸附 */
         }
         
         .screenshot-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
         }
         
+        /* 截图图片 - 解决显示不全问题 */
         .screenshot {
             width: 100%;
-            height: 500px;
-            object-fit: cover;
+            /* 响应式高度，防止溢出 */
+            height: clamp(320px, 120vw, 500px);
+            object-fit: cover; /* 确保图片比例正确 */
             display: block;
         }
         
@@ -568,9 +633,9 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent);
             color: white;
-            padding: 20px;
+            padding: clamp(15px, 3vw, 20px);
             transform: translateY(100%);
             transition: var(--transition);
         }
@@ -580,176 +645,139 @@
         }
         
         .screenshot-title {
-            font-size: 1.1rem;
+            font-size: clamp(0.95rem, 2.5vw, 1.1rem);
             font-weight: 600;
             margin-bottom: 5px;
         }
         
         .screenshot-desc {
-            font-size: 0.9rem;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
             opacity: 0.9;
         }
         
         /* 页脚部分 */
         footer {
             text-align: center;
-            margin-top: 60px;
-            padding-top: 40px;
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            margin-top: clamp(40px, 8vw, 60px);
+            padding-top: clamp(30px, 6vw, 40px);
+            border-top: 1px solid rgba(0, 0, 0, 0.08); /* 变细，更精致 */
             color: var(--gray);
         }
         
         .footer-logo {
-            font-size: 1.8rem;
+            font-size: clamp(1.4rem, 4vw, 1.8rem);
             font-weight: 800;
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 20px;
+            margin-bottom: clamp(15px, 3vw, 20px);
             display: inline-block;
         }
         
         .footer-tagline {
-            font-size: 1.1rem;
-            margin-bottom: 25px;
+            font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+            margin-bottom: clamp(20px, 4vw, 25px);
             max-width: 500px;
             margin-left: auto;
             margin-right: auto;
+            padding: 0 10px; /* 移动端防止文字贴边 */
+            line-height: 1.6;
         }
         
         .copyright {
-            font-size: 0.9rem;
-            margin-top: 20px;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            margin-top: clamp(15px, 3vw, 20px);
             opacity: 0.7;
         }
         
-        /* 响应式设计 */
+        /* 响应式媒体查询 - 细化断点 */
+        /* 平板横屏 */
         @media (max-width: 1024px) {
-            .page-title {
-                font-size: 3rem;
-            }
-            
             .main-app-section {
                 flex-direction: column;
                 text-align: center;
-                padding: 35px 30px;
+                padding: clamp(25px, 4vw, 35px) clamp(20px, 3vw, 30px);
             }
             
             .main-app-info {
                 padding-right: 0;
-                margin-bottom: 30px;
+                margin-bottom: clamp(20px, 4vw, 30px);
             }
             
             .apps-grid, .features-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(clamp(200px, 45%, 250px), 1fr));
             }
         }
         
+        /* 平板竖屏/大屏手机 */
         @media (max-width: 768px) {
             .container {
-                padding: 20px 15px;
-            }
-            
-            .page-title {
-                font-size: 2.5rem;
-            }
-            
-            .page-subtitle {
-                font-size: 1.1rem;
-            }
-            
-            .section-title {
-                font-size: 1.8rem;
-            }
-            
-            .main-app-section {
-                padding: 30px 25px;
-            }
-            
-            .app-name-large {
-                font-size: 2.2rem;
-            }
-            
-            .apps-grid, .online-apps-grid, .features-grid {
-                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-                gap: 20px;
-            }
-            
-            .online-app-card {
-                flex-direction: column;
-                text-align: center;
-                padding: 25px 20px;
-            }
-            
-            .online-app-icon {
-                margin-right: 0;
-                margin-bottom: 20px;
-            }
-            
-            .screenshot-card {
-                width: 240px;
-            }
-            
-            .screenshot {
-                height: 420px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .page-title {
-                font-size: 2rem;
-            }
-            
-            .page-subtitle {
-                font-size: 1rem;
-            }
-            
-            .main-app-section {
-                padding: 25px 20px;
-            }
-            
-            .app-name-large {
-                font-size: 1.8rem;
-            }
-            
-            .main-app-icon {
-                width: 110px;
-                height: 110px;
-                border-radius: 22px;
-            }
-            
-            .apps-grid, .online-apps-grid, .features-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .primary-btn {
-                padding: 14px 28px;
-                font-size: 1.1rem;
-            }
-            
-            .secondary-btn {
-                padding: 8px 20px;
-                font-size: 0.9rem;
-            }
-            
-            .screenshot-card {
-                width: 85vw;
+                padding: clamp(15px, 3vw, 20px) clamp(10px, 2vw, 15px);
             }
             
             .section-header {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 15px;
+                gap: clamp(10px, 2vw, 15px);
+            }
+            
+            .online-app-card {
+                flex-direction: column;
+                text-align: center;
+                padding: clamp(20px, 4vw, 25px) clamp(15px, 3vw, 20px);
+            }
+            
+            .online-app-icon {
+                margin-right: 0;
+                margin-bottom: clamp(15px, 3vw, 20px);
             }
         }
         
-        /* 动画效果 */
+        /* 小屏手机 (375px-480px) */
+        @media (max-width: 480px) {
+            .main-app-section {
+                padding: clamp(20px, 4vw, 25px) clamp(15px, 3vw, 20px);
+            }
+            
+            .app-tags {
+                justify-content: center; /* 移动端标签居中 */
+            }
+            
+            .screenshots-container {
+                gap: 10px; /* 缩小截图间距 */
+            }
+            
+            .screenshot-card {
+                width: clamp(180px, 80vw, 240px);
+            }
+            
+            .screenshot {
+                height: clamp(280px, 100vw, 420px);
+            }
+        }
+        
+        /* 超小屏手机 (<375px) */
+        @media (max-width: 375px) {
+            .app-tag {
+                padding: 3px 10px; /* 进一步缩小标签内边距 */
+                font-size: 0.7rem;
+            }
+            
+            .primary-btn {
+                width: 100%; /* 超小屏按钮全屏宽，方便点击 */
+            }
+            
+            .secondary-btn {
+                width: 100%; /* 超小屏按钮全屏宽 */
+            }
+        }
+        
+        /* 动画效果 - 优化移动端性能 */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px); /* 减小移动距离，更自然 */
             }
             to {
                 opacity: 1;
@@ -773,7 +801,7 @@
             animation-delay: 0.6s;
         }
         
-        /* 加载优化 */
+        /* 加载优化 - 确保图片加载后显示 */
         .app-icon, .main-app-icon, .online-app-icon, .screenshot {
             opacity: 0;
             transition: opacity 0.5s ease;
@@ -1014,15 +1042,22 @@
             // 为所有图片添加加载处理
             const images = document.querySelectorAll('img');
             images.forEach(img => {
+                // 确保图片加载完成后显示
                 if (img.complete) {
                     img.classList.add('loaded');
                 }
+                // 防止图片加载失败导致的占位问题
+                img.onerror = function() {
+                    // 可选：添加默认占位图
+                    // this.src = 'image/default-icon.png';
+                    this.classList.add('loaded');
+                };
             });
             
             // 添加滚动动画效果
             const observerOptions = {
                 threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
+                rootMargin: '0px 0px -30px 0px' // 缩小底部偏移，移动端更早触发动画
             };
             
             const observer = new IntersectionObserver((entries) => {
@@ -1030,6 +1065,7 @@
                     if (entry.isIntersecting) {
                         entry.target.style.opacity = 1;
                         entry.target.style.transform = 'translateY(0)';
+                        observer.unobserve(entry.target); // 只触发一次，提升性能
                     }
                 });
             }, observerOptions);
@@ -1037,7 +1073,7 @@
             // 观察所有具有动画类的元素
             document.querySelectorAll('.fade-in-up').forEach(el => {
                 el.style.opacity = 0;
-                el.style.transform = 'translateY(30px)';
+                el.style.transform = 'translateY(20px)'; // 减小初始偏移，更自然
                 el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
                 observer.observe(el);
             });
